@@ -37,6 +37,8 @@ interface UICtx {
   setAiOpen: (v: boolean) => void;
   sidebarCollapsed: boolean;
   setSidebarCollapsed: (v: boolean) => void;
+  mobileNavOpen: boolean;
+  setMobileNavOpen: (v: boolean) => void;
 
   cardModal: CardModalState;
   openCardModal: (id?: string, draft?: CardDraft) => void;
@@ -65,6 +67,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [commandOpen, setCommandOpen] = useState(false);
   const [aiOpen, setAiOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [cardModal, setCardModal] = useState<CardModalState>({ open: false });
   const [smartImport, setSmartImport] = useState<ModalState>({ open: false });
   const [paymentModal, setPaymentModal] = useState<ModalState>({ open: false });
@@ -79,6 +82,8 @@ export function UIProvider({ children }: { children: ReactNode }) {
       setAiOpen,
       sidebarCollapsed,
       setSidebarCollapsed,
+      mobileNavOpen,
+      setMobileNavOpen,
       cardModal,
       openCardModal: (id, draft) => setCardModal({ open: true, id, draft }),
       closeCardModal: () => setCardModal({ open: false }),
@@ -95,7 +100,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
       openTxnModal: (cardId) => setTxnModal({ open: true, id: cardId }),
       closeTxnModal: () => setTxnModal({ open: false }),
     }),
-    [commandOpen, aiOpen, sidebarCollapsed, cardModal, smartImport, paymentModal, ownerModal, txnModal],
+    [commandOpen, aiOpen, sidebarCollapsed, mobileNavOpen, cardModal, smartImport, paymentModal, ownerModal, txnModal],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 export function Page({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cn('mx-auto w-full max-w-7xl px-6 py-6', className)}>{children}</div>;
+  return <div className={cn('mx-auto w-full max-w-7xl px-4 py-5 sm:px-6 sm:py-6', className)}>{children}</div>;
 }
 
 export function PageHeader({ title, subtitle, actions }: { title: ReactNode; subtitle?: ReactNode; actions?: ReactNode }) {
