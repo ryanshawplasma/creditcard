@@ -1,0 +1,42 @@
+# Render Blueprint — deploys CreditVault AI as a free static site.
+# Docs: https://render.com/docs/blueprint-spec
+#
+# CreditVault AI is a pure client-side SPA (no backend). Render only ever
+# serves the built HTML/JS/CSS in ./dist — no card data is ever sent to or
+# stored on Render. Each visitor's encrypted vault lives in their own browser.
+services:
+  - type: web
+    name: creditvault-ai
+    runtime: static
+    # --include=dev guarantees tsc/vite (devDependencies) install even if the
+    # build environment sets NODE_ENV=production.
+    buildCommand: npm ci --include=dev && npm run build
+    staticPublishPath: ./dist
+    # Auto-deploy on every push to the connected branch.
+    autoDeploy: true
+    # Free preview environments for pull requests.
+    pullRequestPreviewsEnabled: true
+    envVars:
+      - key: NODE_VERSION
+        value: "20.18.1"
+    # SPA fallback. Not strictly required (the app uses HashRouter, so the
+    # server only ever sees "/"), but keeps deep links working if it ever
+    # switches to BrowserRouter.
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: Referrer-Policy
+        value: no-referrer
+      # Hashed Vite assets are immutable — cache them aggressively.
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable

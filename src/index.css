@@ -1,0 +1,173 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------ *
+ * Design tokens. Accent hue is overridable at runtime via --accent-* *
+ * set on :root by the theme store (Settings → Accent Colors).        *
+ * ------------------------------------------------------------------ */
+:root {
+  --accent: 99 102 241; /* indigo-500 — default accent, overridden by theme store */
+  --accent-fg: 255 255 255;
+  --accent-soft: 129 140 248;
+}
+
+/* Dark theme (default) */
+.dark {
+  --bg: 8 10 18;
+  --surface: 16 19 32;
+  --surface-2: 22 26 42;
+  --elevated: 28 33 52;
+  --border: 40 46 68;
+  --border-strong: 60 68 96;
+  --fg: 233 236 245;
+  --muted: 150 158 180;
+  --subtle: 104 112 136;
+  --success: 52 211 153;
+  --warning: 251 191 36;
+  --danger: 248 113 113;
+  --info: 96 165 250;
+  color-scheme: dark;
+}
+
+/* Light theme */
+.light {
+  --bg: 244 246 251;
+  --surface: 255 255 255;
+  --surface-2: 248 250 253;
+  --elevated: 255 255 255;
+  --border: 226 230 240;
+  --border-strong: 205 211 226;
+  --fg: 24 28 42;
+  --muted: 92 100 122;
+  --subtle: 140 148 168;
+  --success: 16 185 129;
+  --warning: 217 119 6;
+  --danger: 220 38 38;
+  --info: 37 99 235;
+  color-scheme: light;
+}
+
+* {
+  border-color: rgb(var(--border));
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-bg text-fg font-sans antialiased;
+  font-feature-settings: 'cv11', 'ss01';
+  text-rendering: optimizeLegibility;
+  overflow: hidden;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--border-strong));
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--subtle));
+  background-clip: content-box;
+}
+
+/* Selection */
+::selection {
+  background: rgb(var(--accent) / 0.28);
+  color: rgb(var(--fg));
+}
+
+/* ------------------------------------------------------------------ *
+ * Reusable component classes                                         *
+ * ------------------------------------------------------------------ */
+@layer components {
+  .glass {
+    @apply bg-surface/70 backdrop-blur-xl border border-border/70;
+  }
+  .glass-strong {
+    @apply bg-surface/85 backdrop-blur-2xl border border-border;
+  }
+  .card-surface {
+    @apply bg-surface border border-border rounded-2xl shadow-soft;
+  }
+  .focus-ring {
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-bg;
+  }
+  .hairline {
+    @apply border-border;
+  }
+  .text-gradient {
+    @apply bg-gradient-to-br from-fg to-muted bg-clip-text text-transparent;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .drag-region {
+    -webkit-app-region: drag;
+  }
+  .no-drag {
+    -webkit-app-region: no-drag;
+  }
+}
+
+/* Loading skeleton shimmer */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: rgb(var(--surface-2));
+}
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(var(--border) / 0.6),
+    transparent
+  );
+  animation: shimmer 1.6s infinite;
+}
+
+/* Animated aurora background used on the login screen */
+.aurora {
+  position: absolute;
+  inset: -40%;
+  filter: blur(90px);
+  opacity: 0.55;
+  background:
+    radial-gradient(38% 42% at 20% 30%, rgb(var(--accent) / 0.9), transparent 60%),
+    radial-gradient(32% 38% at 78% 22%, rgba(56, 189, 248, 0.75), transparent 60%),
+    radial-gradient(42% 46% at 62% 80%, rgba(168, 85, 247, 0.7), transparent 60%),
+    radial-gradient(36% 40% at 30% 78%, rgba(236, 72, 153, 0.55), transparent 60%);
+  animation: spin-slow 40s linear infinite;
+}
+
+.grid-noise {
+  background-image:
+    linear-gradient(rgb(var(--border) / 0.35) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--border) / 0.35) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(circle at 50% 40%, black, transparent 78%);
+}
