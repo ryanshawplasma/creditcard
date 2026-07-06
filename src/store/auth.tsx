@@ -174,6 +174,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error('Incorrect password. Please try again.');
     }
 
+    // Vaults created before the envelope-encryption upgrade lack the wrapped
+    // data key — they can't be opened by the new scheme. Guide the user to reset.
+    if (!account.wrappedDEKPw) {
+      throw new Error(
+        'This vault was created before a security upgrade. Please use “Forgot password → Lost your key? Reset vault” to start fresh.',
+      );
+    }
+
     const kekPw = await deriveKEK(password, account.pwSalt);
     const dek = await unwrapKey(kekPw, account.wrappedDEKPw);
 
