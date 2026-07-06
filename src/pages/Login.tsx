@@ -38,7 +38,7 @@ export function Login() {
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [remember, setRemember] = useState(!!rememberedIdentifier);
-  const [seedDemo, setSeedDemo] = useState(true);
+  const [seedDemo, setSeedDemo] = useState(false);
   const [hint, setHint] = useState('');
   const [error, setError] = useState('');
 
@@ -224,7 +224,7 @@ export function Login() {
                   <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-surface-2/60 px-3 py-2.5">
                     <div className="min-w-0">
                       <p className="text-sm font-medium">Load sample data</p>
-                      <p className="text-[11px] text-subtle">Explore with a demo portfolio. Turn off to start empty.</p>
+                      <p className="text-[11px] text-subtle">Off by default — turn on to explore a demo portfolio. Leave off to start empty.</p>
                     </div>
                     <Switch checked={seedDemo} onChange={setSeedDemo} />
                   </div>
