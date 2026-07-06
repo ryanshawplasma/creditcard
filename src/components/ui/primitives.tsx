@@ -140,13 +140,13 @@ export function Switch({ checked, onChange, label }: { checked: boolean; onChang
 // ── Segmented control ────────────────────────────────────
 export function Segmented<T extends string>({ value, onChange, options }: { value: T; onChange: (v: T) => void; options: { value: T; label: ReactNode }[] }) {
   return (
-    <div className="inline-flex rounded-xl bg-surface-2 border border-border p-0.5">
+    <div className="inline-flex max-w-full overflow-x-auto no-scrollbar rounded-xl bg-surface-2 border border-border p-0.5">
       {options.map((opt) => (
         <button
           key={opt.value}
           onClick={() => onChange(opt.value)}
           className={cn(
-            'relative px-3 py-1.5 text-xs font-medium rounded-lg transition-colors',
+            'relative shrink-0 whitespace-nowrap px-3 py-1.5 text-xs font-medium rounded-lg transition-colors',
             value === opt.value ? 'text-fg' : 'text-muted hover:text-fg',
           )}
         >

@@ -30,6 +30,7 @@ interface AuthCtx {
     username: string;
     email: string;
     password: string;
+    seedDemo?: boolean;
   }) => Promise<void>;
   login: (identifier: string, password: string, remember: boolean) => Promise<void>;
   lock: () => void;
@@ -116,7 +117,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await db.users.add(newUser);
     await db.settings.put(DEFAULT_SETTINGS);
     try {
-      await seedDatabase(key, newUser.displayName, newUser.email);
+      await seedDatabase(key, newUser.displayName, newUser.email, input.seedDemo ?? true);
     } catch (e) {
       // Roll back so a failed seed never leaves a half-created vault.
       await db.users.delete(newUser.id);

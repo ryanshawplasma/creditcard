@@ -269,7 +269,7 @@ export function CardModal() {
         {/* Fields */}
         <div className="space-y-5">
           <Section title="Identity">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <Field label="Card name" className="col-span-2">
                 <Input value={form.name} onChange={(e) => set('name', e.target.value)} placeholder="e.g. Amazon Pay ICICI" autoFocus />
               </Field>
@@ -296,7 +296,7 @@ export function CardModal() {
           </Section>
 
           <Section title="Security" hint="Encrypted at rest — leave blank to keep existing / store only metadata.">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <Field label="Full card number (optional)" className="col-span-2">
                 <div className="relative">
                   <Lock size={14} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-subtle" />
@@ -309,7 +309,7 @@ export function CardModal() {
           </Section>
 
           <Section title="Limits & billing cycle">
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               <Field label="Credit limit"><Input value={form.creditLimit} onChange={(e) => set('creditLimit', e.target.value.replace(/[^\d]/g, ''))} placeholder="500000" inputMode="numeric" /></Field>
               <Field label="Cash limit"><Input value={form.cashLimit} onChange={(e) => set('cashLimit', e.target.value.replace(/[^\d]/g, ''))} placeholder="150000" inputMode="numeric" /></Field>
               <Field label="Current outstanding"><Input value={form.openingBalance} onChange={(e) => set('openingBalance', e.target.value.replace(/[^\d]/g, ''))} placeholder="0" inputMode="numeric" /></Field>
@@ -323,7 +323,7 @@ export function CardModal() {
           </Section>
 
           <Section title="Terms & rewards">
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               <Field label="Interest rate % p.a."><Input value={form.interestRate} onChange={(e) => set('interestRate', e.target.value.replace(/[^\d.]/g, ''))} placeholder="42" inputMode="decimal" /></Field>
               <Field label="Annual fee"><Input value={form.annualFee} onChange={(e) => set('annualFee', e.target.value.replace(/[^\d]/g, ''))} placeholder="2500" inputMode="numeric" /></Field>
               <Field label="Fee month (1–12)"><Input value={form.annualFeeMonth} onChange={(e) => set('annualFeeMonth', e.target.value.replace(/\D/g, '').slice(0, 2))} placeholder="9" inputMode="numeric" /></Field>
@@ -331,7 +331,7 @@ export function CardModal() {
               <Field label="Reward program"><Input value={form.rewardProgram} onChange={(e) => set('rewardProgram', e.target.value)} placeholder="e.g. Edge Rewards" /></Field>
               <Field label="Reward points"><Input value={form.rewardPoints} onChange={(e) => set('rewardPoints', e.target.value.replace(/[^\d]/g, ''))} placeholder="12000" inputMode="numeric" /></Field>
             </div>
-            <div className="mt-3 grid grid-cols-2 gap-3">
+            <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
               <Field label="Linked bank account"><Input value={form.linkedBank} onChange={(e) => set('linkedBank', e.target.value)} placeholder="HDFC Savings ••4501" /></Field>
               <Field label="Tags (comma separated)"><Input value={form.tags} onChange={(e) => set('tags', e.target.value)} placeholder="Travel, Premium" /></Field>
             </div>

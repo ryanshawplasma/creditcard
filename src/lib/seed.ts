@@ -99,7 +99,13 @@ function genActivity(
   return { transactions, payments };
 }
 
-export async function seedDatabase(masterKey: CryptoKey, selfName: string, selfEmail: string) {
+/**
+ * Populate a fresh vault. With `demo` (default) it loads the full sample
+ * portfolio so every screen is alive. With `demo = false` it creates an empty
+ * vault — just the account holder plus a starter list of banks (for smart
+ * autofill) — so a real new user starts from a clean slate.
+ */
+export async function seedDatabase(masterKey: CryptoKey, selfName: string, selfEmail: string, demo = true) {
   const ts = nowISO();
 
   // ── Banks ──────────────────────────────────────────────
@@ -225,31 +231,33 @@ export async function seedDatabase(masterKey: CryptoKey, selfName: string, selfE
   const allTxns: Transaction[] = [];
   const allPays: Payment[] = [];
 
-  for (const spec of specs) {
-    const { fullNumber, grossSpend, outstanding, favouredCats, ...rest } = spec;
-    const secure = { cardNumber: await encryptField(masterKey, fullNumber) };
-    cards.push({
-      ...rest,
-      baselineBalance: 0,
-      currentBalance: outstanding,
-      secure,
-      createdAt: ts,
-      updatedAt: ts,
-    });
-    const activity = genActivity(spec.id, spec.ownerId, grossSpend, outstanding, favouredCats);
-    allTxns.push(...activity.transactions);
-    allPays.push(...activity.payments);
+  if (demo) {
+    for (const spec of specs) {
+      const { fullNumber, grossSpend, outstanding, favouredCats, ...rest } = spec;
+      const secure = { cardNumber: await encryptField(masterKey, fullNumber) };
+      cards.push({
+        ...rest,
+        baselineBalance: 0,
+        currentBalance: outstanding,
+        secure,
+        createdAt: ts,
+        updatedAt: ts,
+      });
+      const activity = genActivity(spec.id, spec.ownerId, grossSpend, outstanding, favouredCats);
+      allTxns.push(...activity.transactions);
+      allPays.push(...activity.payments);
+    }
   }
 
   // ── EMIs ───────────────────────────────────────────────
-  const emis: EMIPlan[] = [
+  const emis: EMIPlan[] = !demo ? [] : [
     { id: uid('emi_'), cardId: 'card_magnus', description: 'MacBook Pro 14"', principal: 199900, monthlyAmount: 17491, totalMonths: 12, paidMonths: 4, interestRate: 13, startDate: format(subDays(new Date(), 120), 'yyyy-MM-dd'), createdAt: ts },
     { id: uid('emi_'), cardId: 'card_regalia', description: 'Sony A7 IV Camera', principal: 245000, monthlyAmount: 41400, totalMonths: 6, paidMonths: 2, interestRate: 14, startDate: format(subDays(new Date(), 62), 'yyyy-MM-dd'), createdAt: ts },
     { id: uid('emi_'), cardId: 'card_sapphiro', description: 'Office Furniture', principal: 120000, monthlyAmount: 10500, totalMonths: 12, paidMonths: 7, interestRate: 12, startDate: format(subDays(new Date(), 210), 'yyyy-MM-dd'), createdAt: ts },
   ];
 
   // ── A sample document ──────────────────────────────────
-  const docs: DocumentFile[] = [
+  const docs: DocumentFile[] = !demo ? [] : [
     {
       id: uid('doc_'), name: 'HDFC Regalia - Statement (latest).txt', kind: 'Statement',
       mime: 'text/plain', size: 640, cardId: 'card_regalia', ownerId: 'own_self',
@@ -267,7 +275,8 @@ export async function seedDatabase(masterKey: CryptoKey, selfName: string, selfE
     [db.banks, db.owners, db.cards, db.transactions, db.payments, db.emis, db.documents],
     async () => {
       await db.banks.bulkAdd(banks);
-      await db.owners.bulkAdd(owners);
+      // Empty vault: keep only the account holder; demo vault: all sample people.
+      await db.owners.bulkAdd(demo ? owners : [owners[0]]);
       await db.cards.bulkAdd(cards);
       await db.transactions.bulkAdd(allTxns);
       await db.payments.bulkAdd(allPays);

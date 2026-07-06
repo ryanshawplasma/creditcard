@@ -106,7 +106,7 @@ export function CalendarPage() {
                 key={day.toISOString()}
                 onClick={() => setSelectedDay(day)}
                 className={cn(
-                  'min-h-[92px] rounded-xl border p-1.5 text-left transition',
+                  'min-h-[58px] rounded-lg border p-1 text-left transition sm:min-h-[92px] sm:rounded-xl sm:p-1.5',
                   inMonth ? 'border-border bg-surface hover:border-border-strong' : 'border-transparent bg-transparent opacity-40',
                   isToday(day) && 'ring-2 ring-accent/60',
                 )}
@@ -114,7 +114,14 @@ export function CalendarPage() {
                 <div className="mb-1 flex items-center justify-between">
                   <span className={cn('flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium', isToday(day) ? 'bg-accent text-accent-fg' : 'text-muted')}>{format(day, 'd')}</span>
                 </div>
-                <div className="space-y-0.5">
+                {/* Mobile: compact dots */}
+                <div className="flex flex-wrap gap-1 sm:hidden">
+                  {evs.slice(0, 5).map((ev, i) => (
+                    <span key={i} className={cn('h-1.5 w-1.5 rounded-full', KIND_META[ev.kind].dot)} />
+                  ))}
+                </div>
+                {/* Tablet/desktop: labelled pills */}
+                <div className="hidden space-y-0.5 sm:block">
                   {evs.slice(0, 3).map((ev, i) => (
                     <div key={i} className="flex items-center gap-1 truncate rounded px-1 py-0.5 text-[10px]" style={{ background: 'rgb(var(--surface-2))' }}>
                       <span className={cn('h-1.5 w-1.5 shrink-0 rounded-full', KIND_META[ev.kind].dot)} />

@@ -38,6 +38,7 @@ export function Login() {
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [remember, setRemember] = useState(!!rememberedIdentifier);
+  const [seedDemo, setSeedDemo] = useState(true);
   const [error, setError] = useState('');
 
   const pwStrength = useMemo(() => strength(password), [password]);
@@ -50,8 +51,8 @@ export function Login() {
     if (password !== confirm) return setError('Passwords do not match.');
     setBusy(true);
     try {
-      await register({ displayName, username, email, password });
-      toast.success('Welcome to CreditVault AI', 'Your encrypted vault is ready.');
+      await register({ displayName, username, email, password, seedDemo });
+      toast.success('Welcome to CreditVault AI', seedDemo ? 'Your vault is ready with sample data to explore.' : 'Your empty vault is ready.');
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -188,6 +189,13 @@ export function Login() {
                   <Field label="Confirm password">
                     <Input type={showPw ? 'text' : 'password'} value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="Re-enter password" />
                   </Field>
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-surface-2/60 px-3 py-2.5">
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium">Load sample data</p>
+                      <p className="text-[11px] text-subtle">Explore with a demo portfolio. Turn off to start empty.</p>
+                    </div>
+                    <Switch checked={seedDemo} onChange={setSeedDemo} />
+                  </div>
                   {error && <ErrorLine text={error} />}
                   <Button variant="primary" size="lg" className="w-full" loading={busy} onClick={handleRegister}>
                     Create secure vault <ArrowRight size={16} />

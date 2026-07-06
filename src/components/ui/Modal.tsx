@@ -50,7 +50,7 @@ export function Modal({ open, onClose, title, description, children, footer, siz
             className={cn('relative z-10 my-6 w-full rounded-3xl glass-strong shadow-lift', sizes[size], className)}
           >
             {(title || description) && (
-              <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-5">
+              <div className="flex items-start justify-between gap-4 border-b border-border px-4 py-4 sm:px-6 sm:py-5">
                 <div className="min-w-0">
                   {title && <h2 className="text-lg font-semibold text-fg">{title}</h2>}
                   {description && <p className="mt-0.5 text-sm text-muted">{description}</p>}
@@ -60,8 +60,8 @@ export function Modal({ open, onClose, title, description, children, footer, siz
                 </IconButton>
               </div>
             )}
-            <div className="max-h-[70vh] overflow-y-auto px-6 py-5">{children}</div>
-            {footer && <div className="flex items-center justify-end gap-2 border-t border-border px-6 py-4">{footer}</div>}
+            <div className="max-h-[72vh] overflow-y-auto px-4 py-4 sm:px-6 sm:py-5">{children}</div>
+            {footer && <div className="flex items-center justify-end gap-2 border-t border-border px-4 py-3 sm:px-6 sm:py-4">{footer}</div>}
           </motion.div>
         </div>
       )}
