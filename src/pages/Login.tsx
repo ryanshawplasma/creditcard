@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Vault, Eye, EyeOff, ShieldCheck, Fingerprint, Lock, Mail, User, ArrowRight, Moon, Sun } from 'lucide-react';
+import { Vault, Eye, EyeOff, ShieldCheck, Fingerprint, Lock, Mail, User, ArrowRight, Moon, Sun, KeyRound } from 'lucide-react';
 import { useAuth } from '@/store/auth';
 import { useTheme } from '@/store/theme';
 import { useToast } from '@/components/ui/Toast';
@@ -23,7 +23,7 @@ function strength(pw: string): { score: number; label: string; tone: string } {
 }
 
 export function Login() {
-  const { status, register, login, rememberedIdentifier } = useAuth();
+  const { status, register, login, recoverWithKey, rememberedIdentifier } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const toast = useToast();
 
@@ -39,9 +39,42 @@ export function Login() {
   const [confirm, setConfirm] = useState('');
   const [remember, setRemember] = useState(!!rememberedIdentifier);
   const [seedDemo, setSeedDemo] = useState(true);
+  const [hint, setHint] = useState('');
   const [error, setError] = useState('');
 
+  // Forgot-password flow state
+  const [forgotView, setForgotView] = useState<'recovery' | 'reset'>('recovery');
+  const [accountHint, setAccountHint] = useState<string | undefined>();
+  const [recoveryKey, setRecoveryKey] = useState('');
+  const [resetConfirm, setResetConfirm] = useState('');
+
   const pwStrength = useMemo(() => strength(password), [password]);
+
+  async function enterForgot() {
+    setMode('forgot');
+    setError('');
+    setForgotView('recovery');
+    setRecoveryKey('');
+    setResetConfirm('');
+    const account = await db.users.toCollection().first();
+    setAccountHint(account?.hint);
+  }
+
+  async function handleRecover() {
+    setError('');
+    if (!recoveryKey.trim()) return setError('Enter your recovery key.');
+    if (password.length < 8) return setError('New password must be at least 8 characters.');
+    if (password !== confirm) return setError('Passwords do not match.');
+    setBusy(true);
+    try {
+      await recoverWithKey(recoveryKey, password);
+      toast.success('Vault unlocked', 'Your new master password is set.');
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function handleRegister() {
     setError('');
@@ -51,7 +84,7 @@ export function Login() {
     if (password !== confirm) return setError('Passwords do not match.');
     setBusy(true);
     try {
-      await register({ displayName, username, email, password, seedDemo });
+      await register({ displayName, username, email, password, seedDemo, hint });
       toast.success('Welcome to CreditVault AI', seedDemo ? 'Your vault is ready with sample data to explore.' : 'Your empty vault is ready.');
     } catch (e) {
       setError((e as Error).message);
@@ -74,11 +107,7 @@ export function Login() {
   }
 
   async function handleReset() {
-    if (!confirm.trim()) {
-      setError('Type RESET to confirm.');
-      return;
-    }
-    if (confirm.trim().toUpperCase() !== 'RESET') return setError('Type RESET exactly to confirm.');
+    if (resetConfirm.trim().toUpperCase() !== 'RESET') return setError('Type RESET exactly to confirm.');
     await db.delete();
     location.reload();
   }
@@ -189,6 +218,9 @@ export function Login() {
                   <Field label="Confirm password">
                     <Input type={showPw ? 'text' : 'password'} value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="Re-enter password" />
                   </Field>
+                  <Field label="Password hint (optional)" hint="Shown if you forget — don’t make it the password itself.">
+                    <Input value={hint} onChange={(e) => setHint(e.target.value)} placeholder="e.g. our anniversary + street name" />
+                  </Field>
                   <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-surface-2/60 px-3 py-2.5">
                     <div className="min-w-0">
                       <p className="text-sm font-medium">Load sample data</p>
@@ -222,7 +254,7 @@ export function Login() {
                     <label className="flex cursor-pointer items-center gap-2 text-sm text-muted">
                       <Switch checked={remember} onChange={setRemember} /> Remember me
                     </label>
-                    <button onClick={() => { setMode('forgot'); setError(''); }} className="text-sm text-accent hover:underline">Forgot password?</button>
+                    <button onClick={enterForgot} className="text-sm text-accent hover:underline">Forgot password?</button>
                   </div>
                   {error && <ErrorLine text={error} />}
                   <Button variant="primary" size="lg" className="w-full" loading={busy} onClick={handleLogin}>
@@ -231,24 +263,60 @@ export function Login() {
                 </div>
               )}
 
-              {mode === 'forgot' && (
+              {mode === 'forgot' && forgotView === 'recovery' && (
                 <div className="space-y-4">
                   <div>
-                    <h2 className="text-xl font-semibold">Password recovery</h2>
+                    <h2 className="text-xl font-semibold">Unlock with recovery key</h2>
                     <p className="mt-1 text-sm text-muted">
-                      Your vault uses zero-knowledge encryption — there’s no master password on any server, so it
-                      genuinely cannot be recovered. You can reset and start fresh (this erases all local data).
+                      Enter the recovery key you saved when you created your vault, then choose a new master password.
+                    </p>
+                  </div>
+                  {accountHint && (
+                    <div className="rounded-xl border border-info/30 bg-info/10 p-3 text-xs text-info">
+                      💡 Your password hint: <span className="font-medium">{accountHint}</span>
+                    </div>
+                  )}
+                  <Field label="Recovery key">
+                    <div className="relative">
+                      <KeyRound size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-subtle" />
+                      <Input value={recoveryKey} onChange={(e) => setRecoveryKey(e.target.value)} placeholder="ABCD-EFGH-JKLM-NPQR-STUV" className="pl-9 font-mono uppercase" autoFocus />
+                    </div>
+                  </Field>
+                  <Field label="New master password">
+                    <PasswordInput value={password} onChange={setPassword} show={showPw} setShow={setShowPw} placeholder="At least 8 characters" />
+                  </Field>
+                  <Field label="Confirm new password">
+                    <Input type={showPw ? 'text' : 'password'} value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="Re-enter new password" />
+                  </Field>
+                  {error && <ErrorLine text={error} />}
+                  <Button variant="primary" size="lg" className="w-full" loading={busy} onClick={handleRecover}>
+                    Reset password &amp; unlock <ArrowRight size={16} />
+                  </Button>
+                  <div className="flex items-center justify-between text-sm">
+                    <button onClick={() => { setMode('login'); setError(''); }} className="text-muted hover:text-fg">← Back to sign in</button>
+                    <button onClick={() => { setForgotView('reset'); setError(''); }} className="text-danger/80 hover:text-danger">Lost your key? Reset vault</button>
+                  </div>
+                </div>
+              )}
+
+              {mode === 'forgot' && forgotView === 'reset' && (
+                <div className="space-y-4">
+                  <div>
+                    <h2 className="text-xl font-semibold">Reset vault</h2>
+                    <p className="mt-1 text-sm text-muted">
+                      Without your password or recovery key, a zero-knowledge vault genuinely cannot be opened. Resetting
+                      starts fresh and erases all local data.
                     </p>
                   </div>
                   <div className="rounded-xl border border-warning/30 bg-warning/10 p-3 text-xs text-warning">
-                    Resetting permanently deletes every card, person and payment stored on this device.
+                    This permanently deletes every card, person and payment stored on this device.
                   </div>
                   <Field label="Type RESET to confirm">
-                    <Input value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="RESET" />
+                    <Input value={resetConfirm} onChange={(e) => setResetConfirm(e.target.value)} placeholder="RESET" />
                   </Field>
                   {error && <ErrorLine text={error} />}
                   <div className="flex gap-2">
-                    <Button className="flex-1" onClick={() => { setMode('login'); setError(''); setConfirm(''); }}>Back</Button>
+                    <Button className="flex-1" onClick={() => { setForgotView('recovery'); setError(''); setResetConfirm(''); }}>Back</Button>
                     <Button variant="danger" className="flex-1" onClick={handleReset}>Reset vault</Button>
                   </div>
                 </div>

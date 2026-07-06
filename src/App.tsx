@@ -5,6 +5,7 @@ import { useAuth } from './store/auth';
 import { DataProvider } from './store/data';
 import { Login } from './pages/Login';
 import { AppShell } from './components/layout/AppShell';
+import { RecoveryKeyModal } from './components/RecoveryKeyModal';
 import { Dashboard } from './pages/Dashboard';
 import { CardsPage } from './pages/Cards';
 import { PeoplePage } from './pages/People';
@@ -77,6 +78,7 @@ export default function App() {
       <AppShell>
         <AnimatedRoutes />
       </AppShell>
+      <RecoveryKeyModal />
     </DataProvider>
   );
 }

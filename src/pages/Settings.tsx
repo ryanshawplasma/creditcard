@@ -1,8 +1,9 @@
 import { useRef, useState } from 'react';
 import {
   Palette, Bell, Send, Mail, Globe, Database, ShieldCheck, Download, Upload,
-  FileSpreadsheet, Trash2, Check, Moon, Sun, Clock, ScrollText,
+  FileSpreadsheet, Trash2, Check, Moon, Sun, Clock, ScrollText, KeyRound,
 } from 'lucide-react';
+import { SecuritySettings } from '@/components/SecuritySettings';
 import { useData } from '@/store/data';
 import { useTheme, ACCENTS } from '@/store/theme';
 import { useToast } from '@/components/ui/Toast';
@@ -180,6 +181,11 @@ export function SettingsPage() {
           <div className="mt-4 flex items-center gap-2 rounded-xl border border-success/25 bg-success/5 p-3 text-xs text-success">
             <ShieldCheck size={15} /> Card numbers & CVVs are AES-256 encrypted with a key derived from your master password. Nothing is sent to any server.
           </div>
+        </SettingsCard>
+
+        {/* Security & password */}
+        <SettingsCard icon={KeyRound} title="Security & password" desc="Master password, hint and recovery key">
+          <SecuritySettings />
         </SettingsCard>
 
         {/* Data */}

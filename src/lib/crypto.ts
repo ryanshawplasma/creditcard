@@ -63,10 +63,56 @@ export function constantTimeEqual(a: string, b: string): boolean {
   return mismatch === 0;
 }
 
-/** Derive the in-memory AES-GCM master key from the password + key salt. */
-export async function deriveMasterKey(password: string, keySalt: string): Promise<CryptoKey> {
-  const bits = await deriveBits(password, keySalt, 256);
+/**
+ * Derive a Key-Encryption-Key (KEK) from a secret (password or recovery key)
+ * plus salt. The KEK never encrypts data directly — it only wraps/unwraps the
+ * random Data-Encryption-Key (see below). This is what lets us rotate the
+ * password or recover with a recovery key without re-encrypting anything.
+ */
+export async function deriveKEK(secret: string, salt: string): Promise<CryptoKey> {
+  const bits = await deriveBits(secret, salt, 256);
   return crypto.subtle.importKey('raw', bits, { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']);
+}
+
+/** Backwards-compatible alias (the app calls the unwrapped data key the "master key"). */
+export const deriveMasterKey = deriveKEK;
+
+/** Generate a fresh random Data-Encryption-Key — the key that actually encrypts card fields. */
+export async function generateDataKey(): Promise<CryptoKey> {
+  return crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt', 'decrypt']);
+}
+
+/** Encrypt (wrap) the data key with a KEK, producing a storable blob. */
+export async function wrapKey(kek: CryptoKey, dataKey: CryptoKey): Promise<EncryptedBlob> {
+  const raw = await crypto.subtle.exportKey('raw', dataKey);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, kek, raw);
+  return { iv: toBase64(iv), ciphertext: toBase64(ciphertext) };
+}
+
+/** Decrypt (unwrap) the data key with a KEK. Throws if the KEK is wrong. */
+export async function unwrapKey(kek: CryptoKey, blob: EncryptedBlob): Promise<CryptoKey> {
+  const raw = await crypto.subtle.decrypt(
+    { name: 'AES-GCM', iv: fromBase64(blob.iv) },
+    kek,
+    fromBase64(blob.ciphertext),
+  );
+  return crypto.subtle.importKey('raw', raw, { name: 'AES-GCM' }, true, ['encrypt', 'decrypt']);
+}
+
+// Unambiguous alphabet (no 0/O/1/I) for a human-transcribable recovery key.
+const RECOVERY_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+
+/** A ~100-bit recovery key, grouped for readability: ABCD-EFGH-JKLM-NPQR-STUV */
+export function generateRecoveryKey(): string {
+  const bytes = crypto.getRandomValues(new Uint8Array(20));
+  let s = '';
+  for (let i = 0; i < bytes.length; i++) s += RECOVERY_ALPHABET[bytes[i] % 32];
+  return s.replace(/(.{4})(?=.)/g, '$1-');
+}
+
+export function normalizeRecoveryKey(key: string): string {
+  return key.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
 }
 
 export async function encryptField(key: CryptoKey, plaintext: string): Promise<EncryptedBlob> {

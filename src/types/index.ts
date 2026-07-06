@@ -221,11 +221,22 @@ export interface AppUser {
   username: string;
   email: string;
   displayName: string;
-  /** PBKDF2 verifier — never the password itself. */
+
+  /** PBKDF2 verifier for the password — never the password itself. */
   pwHash: string;
   pwSalt: string;
-  /** Salt used to derive the AES master key for field encryption. */
-  keySalt: string;
+  /** Data key wrapped by the password-derived KEK. */
+  wrappedDEKPw: EncryptedBlob;
+
+  /** PBKDF2 verifier for the recovery key. */
+  recoveryVerifier: string;
+  recoverySalt: string;
+  /** Same data key wrapped by the recovery-key-derived KEK. */
+  wrappedDEKRec: EncryptedBlob;
+
+  /** Optional plaintext hint shown on the forgot-password screen. */
+  hint?: string;
+
   createdAt: ISODateTime;
 }
 
