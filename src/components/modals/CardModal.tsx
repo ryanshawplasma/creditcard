@@ -93,15 +93,36 @@ export function CardModal() {
   useEffect(() => {
     if (!cardModal.open) return;
     setError('');
-    if (editing) setForm(fromCard(editing));
-    else {
-      const base = empty();
-      base.bankId = banks[0]?.id ?? '';
-      base.ownerId = owners.find((o) => o.relationship === 'Self')?.id ?? owners[0]?.id ?? '';
-      setForm(base);
+    if (editing) {
+      setForm(fromCard(editing));
+      return;
     }
+    const base = empty();
+    base.bankId = banks[0]?.id ?? '';
+    base.ownerId = owners.find((o) => o.relationship === 'Self')?.id ?? owners[0]?.id ?? '';
+    // Pre-fill from a smart-import draft (photo / pasted text), if present.
+    const d = cardModal.draft;
+    if (d) {
+      if (d.name) base.name = d.name;
+      if (d.network) base.network = d.network;
+      if (d.last4) base.last4 = d.last4;
+      if (d.fullCardNumber) base.fullCardNumber = d.fullCardNumber;
+      if (d.rewardProgram) base.rewardProgram = d.rewardProgram;
+      if (d.image) base.image = d.image;
+      if (d.notes) base.notes = d.notes;
+      if (d.creditLimit) base.creditLimit = String(d.creditLimit);
+      if (d.openingBalance !== undefined) base.openingBalance = String(d.openingBalance);
+      if (d.dueDay) base.dueDay = String(d.dueDay);
+      if (d.billingDay) base.billingDay = String(d.billingDay);
+      if (d.statementDay) base.statementDay = String(d.statementDay);
+      if (d.expiryMonth) base.expiryMonth = String(d.expiryMonth);
+      if (d.expiryYear) base.expiryYear = String(d.expiryYear);
+      if (d.bankId) base.bankId = d.bankId;
+      else if (d.newBankName) { base.bankId = ''; base.newBankName = d.newBankName; }
+    }
+    setForm(base);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cardModal.open, cardModal.id]);
+  }, [cardModal.open, cardModal.id, cardModal.draft]);
 
   const set = <K extends keyof FormState>(k: K, v: FormState[K]) => setForm((f) => ({ ...f, [k]: v }));
 

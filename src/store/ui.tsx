@@ -1,8 +1,33 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
+import type { CardNetwork } from '@/types';
 
 interface ModalState {
   open: boolean;
   id?: string; // entity id when editing / preselecting
+}
+
+/** A partial card the smart-import flow hands to the editor for review. */
+export interface CardDraft {
+  name?: string;
+  bankId?: string;
+  newBankName?: string;
+  network?: CardNetwork;
+  last4?: string;
+  fullCardNumber?: string;
+  creditLimit?: number;
+  openingBalance?: number;
+  dueDay?: number;
+  billingDay?: number;
+  statementDay?: number;
+  expiryMonth?: number;
+  expiryYear?: number;
+  image?: string;
+  notes?: string;
+  rewardProgram?: string;
+}
+
+interface CardModalState extends ModalState {
+  draft?: CardDraft;
 }
 
 interface UICtx {
@@ -13,9 +38,13 @@ interface UICtx {
   sidebarCollapsed: boolean;
   setSidebarCollapsed: (v: boolean) => void;
 
-  cardModal: ModalState;
-  openCardModal: (id?: string) => void;
+  cardModal: CardModalState;
+  openCardModal: (id?: string, draft?: CardDraft) => void;
   closeCardModal: () => void;
+
+  smartImport: ModalState;
+  openSmartImport: () => void;
+  closeSmartImport: () => void;
 
   paymentModal: ModalState;
   openPaymentModal: (cardId?: string) => void;
@@ -36,7 +65,8 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [commandOpen, setCommandOpen] = useState(false);
   const [aiOpen, setAiOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [cardModal, setCardModal] = useState<ModalState>({ open: false });
+  const [cardModal, setCardModal] = useState<CardModalState>({ open: false });
+  const [smartImport, setSmartImport] = useState<ModalState>({ open: false });
   const [paymentModal, setPaymentModal] = useState<ModalState>({ open: false });
   const [ownerModal, setOwnerModal] = useState<ModalState>({ open: false });
   const [txnModal, setTxnModal] = useState<ModalState>({ open: false });
@@ -50,8 +80,11 @@ export function UIProvider({ children }: { children: ReactNode }) {
       sidebarCollapsed,
       setSidebarCollapsed,
       cardModal,
-      openCardModal: (id) => setCardModal({ open: true, id }),
+      openCardModal: (id, draft) => setCardModal({ open: true, id, draft }),
       closeCardModal: () => setCardModal({ open: false }),
+      smartImport,
+      openSmartImport: () => setSmartImport({ open: true }),
+      closeSmartImport: () => setSmartImport({ open: false }),
       paymentModal,
       openPaymentModal: (cardId) => setPaymentModal({ open: true, id: cardId }),
       closePaymentModal: () => setPaymentModal({ open: false }),
@@ -62,7 +95,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
       openTxnModal: (cardId) => setTxnModal({ open: true, id: cardId }),
       closeTxnModal: () => setTxnModal({ open: false }),
     }),
-    [commandOpen, aiOpen, sidebarCollapsed, cardModal, paymentModal, ownerModal, txnModal],
+    [commandOpen, aiOpen, sidebarCollapsed, cardModal, smartImport, paymentModal, ownerModal, txnModal],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

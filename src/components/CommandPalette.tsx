@@ -25,7 +25,7 @@ interface Cmd {
 }
 
 export function CommandPalette() {
-  const { commandOpen, setCommandOpen, openCardModal, openPaymentModal, openOwnerModal, setAiOpen } = useUI();
+  const { commandOpen, setCommandOpen, openCardModal, openPaymentModal, openOwnerModal, openSmartImport, setAiOpen } = useUI();
   const { cards, owners, banks, ownersById } = useData();
   const { toggleTheme } = useTheme();
   const { lock } = useAuth();
@@ -54,6 +54,7 @@ export function CommandPalette() {
     const close = () => setCommandOpen(false);
     const actions: Cmd[] = [
       { id: 'add-card', label: 'Add a card', group: 'Actions', icon: <Plus size={16} />, keywords: 'new create', run: () => { close(); openCardModal(); } },
+      { id: 'smart-add', label: 'Smart add card (photo / text)', group: 'Actions', icon: <Sparkles size={16} />, keywords: 'import ocr scan paste sms statement', run: () => { close(); openSmartImport(); } },
       { id: 'record-payment', label: 'Record a payment', group: 'Actions', icon: <Wallet size={16} />, keywords: 'pay', run: () => { close(); openPaymentModal(); } },
       { id: 'add-person', label: 'Add a person', group: 'Actions', icon: <Users size={16} />, keywords: 'owner', run: () => { close(); openOwnerModal(); } },
       { id: 'ask-ai', label: 'Ask the AI assistant', group: 'Actions', icon: <Sparkles size={16} />, keywords: 'chat question', run: () => { close(); setAiOpen(true); } },
@@ -75,7 +76,7 @@ export function CommandPalette() {
       run: () => { close(); navigate('/people'); setTimeout(() => openOwnerModal(o.id), 60); },
     }));
     return [...actions, ...nav, ...cardCmds, ...ownerCmds];
-  }, [cards, owners, banks, ownersById, setCommandOpen, openCardModal, openPaymentModal, openOwnerModal, setAiOpen, toggleTheme, lock, navigate]);
+  }, [cards, owners, banks, ownersById, setCommandOpen, openCardModal, openPaymentModal, openOwnerModal, openSmartImport, setAiOpen, toggleTheme, lock, navigate]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();

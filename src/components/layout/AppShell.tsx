@@ -8,6 +8,7 @@ import { FAB } from '@/components/FAB';
 import { CommandPalette } from '@/components/CommandPalette';
 import { AIAssistant } from '@/components/AIAssistant';
 import { CardModal } from '@/components/modals/CardModal';
+import { SmartImportModal } from '@/components/modals/SmartImportModal';
 import { PaymentModal } from '@/components/modals/PaymentModal';
 import { OwnerModal } from '@/components/modals/OwnerModal';
 import { TxnModal } from '@/components/modals/TxnModal';
@@ -48,6 +49,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <CommandPalette />
       <AIAssistant />
       <CardModal />
+      <SmartImportModal />
       <PaymentModal />
       <OwnerModal />
       <TxnModal />

@@ -23,6 +23,9 @@ are **AES-256 encrypted at rest**; nothing is ever sent to a server.
   overdue) with native desktop notifications.
 - 🤖 **Built-in AI assistant** — ask *"which cards are due this week?"*, *"how much does
   Ryan owe?"*, *"which cards crossed 70% utilization?"* — answered instantly and locally.
+- ✨ **Smart add** — paste a bank SMS/statement or drop a photo of a card; it extracts
+  the bank, last 4, limit, due date, expiry & balance (in-browser OCR — the image
+  never leaves your device) and opens a pre-filled form for you to review and edit.
 - 🗓️ **Calendar, Payments, Spending, Rewards, Analytics, Documents** — the full picture.
 - ⌨️ **Command palette (Ctrl / ⌘ + K)**, global search, quick-add FAB, keyboard nav.
 - 🎨 **Dark / light themes, 8 accent colours, glassmorphism, micro-animations.**
@@ -175,7 +178,8 @@ chart, recent-activity feed.
 
 **Cards** · grid/list views, live search, filter by person/status, sort, encrypted
 card-number reveal, per-card detail with utilization, terms, rewards, payment history,
-status changes, pin/favourite.
+status changes, pin/favourite. **Smart add** turns a pasted bank SMS/statement or a
+card photo into a pre-filled, editable card (local text parsing + in-browser OCR).
 
 **People** · owners with avatars, relationships, contacts, per-person card totals &
 utilization.

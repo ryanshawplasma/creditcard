@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import {
   Plus, Search, Star, Pencil, Wallet, Trash2, Eye, EyeOff, Copy, ShieldCheck,
-  CreditCard as CardIcon, Grid3x3, List,
+  CreditCard as CardIcon, Grid3x3, List, Sparkles,
 } from 'lucide-react';
 import { useData } from '@/store/data';
 import { useUI } from '@/store/ui';
@@ -22,7 +22,7 @@ import type { Card } from '@/types';
 
 export function CardsPage() {
   const { cards, owners, ownersById, banksById, payments } = useData();
-  const { openCardModal, openPaymentModal } = useUI();
+  const { openCardModal, openPaymentModal, openSmartImport } = useUI();
   const [q, setQ] = useState('');
   const [ownerFilter, setOwnerFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -58,7 +58,12 @@ export function CardsPage() {
       <PageHeader
         title="Cards"
         subtitle={`${cards.filter((c) => c.status === 'Active').length} active · ${money(cards.reduce((s, c) => s + c.currentBalance, 0))} outstanding`}
-        actions={<Button variant="primary" onClick={() => openCardModal()}><Plus size={16} /> Add card</Button>}
+        actions={
+          <>
+            <Button onClick={openSmartImport}><Sparkles size={16} /> Smart add</Button>
+            <Button variant="primary" onClick={() => openCardModal()}><Plus size={16} /> Add card</Button>
+          </>
+        }
       />
 
       {/* Filters */}

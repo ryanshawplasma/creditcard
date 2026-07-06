@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Plus, CreditCard, Wallet, Users, Receipt } from 'lucide-react';
+import { Plus, CreditCard, Wallet, Users, Receipt, Sparkles } from 'lucide-react';
 import { useUI } from '@/store/ui';
 
 export function FAB() {
-  const { openCardModal, openPaymentModal, openOwnerModal, openTxnModal } = useUI();
+  const { openCardModal, openPaymentModal, openOwnerModal, openTxnModal, openSmartImport } = useUI();
   const [open, setOpen] = useState(false);
 
   const actions = [
+    { label: 'Smart add card', icon: Sparkles, run: () => openSmartImport() },
     { label: 'Add card', icon: CreditCard, run: () => openCardModal() },
     { label: 'Record payment', icon: Wallet, run: () => openPaymentModal() },
     { label: 'Add spend', icon: Receipt, run: () => openTxnModal() },
