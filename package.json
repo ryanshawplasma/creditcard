@@ -8,7 +8,9 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "push": "node scripts/autopush.mjs --once",
+    "autopush": "node scripts/autopush.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",
