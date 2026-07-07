@@ -8,12 +8,14 @@ export function Page({ children, className }: { children: ReactNode; className?:
 
 export function PageHeader({ title, subtitle, actions }: { title: ReactNode; subtitle?: ReactNode; actions?: ReactNode }) {
   return (
-    <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
+    <div className="mb-5 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
+      <div className="min-w-0">
+        <h2 className="text-xl font-bold tracking-tight sm:text-2xl">{title}</h2>
         {subtitle && <p className="mt-1 text-sm text-muted">{subtitle}</p>}
       </div>
-      {actions && <div className="flex items-center gap-2">{actions}</div>}
+      {actions && (
+        <div className="flex items-center gap-2 [&>*]:flex-1 sm:[&>*]:flex-none">{actions}</div>
+      )}
     </div>
   );
 }

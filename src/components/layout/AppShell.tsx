@@ -3,6 +3,7 @@ import { UIProvider } from '@/store/ui';
 import { useData } from '@/store/data';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
+import { BottomNav } from './BottomNav';
 import { DueBanner } from '@/components/DueBanner';
 import { FAB } from '@/components/FAB';
 import { CommandPalette } from '@/components/CommandPalette';
@@ -40,11 +41,12 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="flex min-w-0 flex-1 flex-col">
           <Topbar />
           <DueBanner />
-          <main className="flex-1 overflow-y-auto">{children}</main>
+          <main className="flex-1 overflow-y-auto pb-[calc(4.25rem+env(safe-area-inset-bottom))] lg:pb-0">{children}</main>
         </div>
       </div>
 
       {/* Global overlays */}
+      <BottomNav />
       <FAB />
       <CommandPalette />
       <AIAssistant />

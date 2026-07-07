@@ -96,16 +96,18 @@ export function AnalyticsPage() {
       <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <ChartCard title="Spend by category">
           {byCategory.length === 0 ? <NoData /> : (
-            <div className="flex items-center gap-4">
-              <ResponsiveContainer width="55%" height={240}>
-                <PieChart>
-                  <Pie data={byCategory} dataKey="amount" nameKey="category" innerRadius={55} outerRadius={90} paddingAngle={2} stroke="none">
-                    {byCategory.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
-                  </Pie>
-                  <Tooltip content={<ChartTooltip />} />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="flex-1 space-y-1.5">
+            <div className="flex flex-col items-center gap-3 sm:flex-row sm:gap-4">
+              <div className="h-[200px] w-full sm:h-[240px] sm:w-[55%]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie data={byCategory} dataKey="amount" nameKey="category" innerRadius={55} outerRadius={90} paddingAngle={2} stroke="none">
+                      {byCategory.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
+                    </Pie>
+                    <Tooltip content={<ChartTooltip />} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="w-full flex-1 space-y-1.5">
                 {byCategory.slice(0, 6).map((c, i) => (
                   <div key={c.category} className="flex items-center gap-2 text-xs">
                     <span className="h-2.5 w-2.5 rounded-full" style={{ background: PIE_COLORS[i % PIE_COLORS.length] }} />

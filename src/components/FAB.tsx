@@ -16,7 +16,7 @@ export function FAB() {
   ];
 
   return (
-    <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-3">
+    <div className="fixed bottom-[calc(4.75rem+env(safe-area-inset-bottom))] right-5 z-40 flex flex-col items-end gap-3 lg:bottom-6 lg:right-6">
       <AnimatePresence>
         {open && (
           <motion.div initial="hidden" animate="show" exit="hidden" className="flex flex-col items-end gap-2.5">

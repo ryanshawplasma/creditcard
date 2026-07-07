@@ -32,14 +32,14 @@ export function Sidebar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={closeMobile}
-            className="fixed inset-0 z-30 bg-black/50 backdrop-blur-sm lg:hidden"
+            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
           />
         )}
       </AnimatePresence>
 
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-40 flex h-full flex-col border-r border-border bg-surface/95 backdrop-blur-xl transition-[transform,width] duration-300 ease-out lg:static lg:z-20 lg:bg-surface/60',
+          'fixed inset-y-0 left-0 z-50 flex h-full flex-col border-r border-border bg-surface/95 backdrop-blur-xl transition-[transform,width] duration-300 ease-out lg:static lg:z-20 lg:bg-surface/60',
           'w-[264px]',
           iconOnly ? 'lg:w-[76px]' : 'lg:w-[248px]',
           mobileNavOpen ? 'translate-x-0 shadow-lift' : '-translate-x-full lg:translate-x-0',

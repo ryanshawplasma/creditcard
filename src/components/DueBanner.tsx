@@ -23,7 +23,7 @@ export function DueBanner() {
       <motion.div
         initial={{ opacity: 0, y: -8, height: 0 }}
         animate={{ opacity: 1, y: 0, height: 'auto' }}
-        className="px-6 pt-4"
+        className="px-4 pt-4 sm:px-6"
       >
         <div className={`flex items-center gap-3 rounded-2xl border px-4 py-3 ${isOverdue ? 'border-danger/30 bg-danger/10' : 'border-warning/30 bg-warning/10'}`}>
           <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${isOverdue ? 'bg-danger/20 text-danger' : 'bg-warning/20 text-warning'}`}>

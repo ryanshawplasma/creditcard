@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom';
-import { Search, Command, Sparkles, Sun, Moon, Wallet, Bell, Menu } from 'lucide-react';
+import { Search, Command, Sparkles, Sun, Moon, Wallet, Bell } from 'lucide-react';
 import { PAGE_TITLES } from './nav';
 import { useUI } from '@/store/ui';
 import { useTheme } from '@/store/theme';
@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 
 export function Topbar() {
   const { pathname } = useLocation();
-  const { setCommandOpen, setAiOpen, openPaymentModal, setMobileNavOpen } = useUI();
+  const { setCommandOpen, setAiOpen, openPaymentModal } = useUI();
   const { theme, toggleTheme } = useTheme();
   const { dueItems } = useData();
   const title = PAGE_TITLES[pathname] ?? 'CreditVault AI';
@@ -17,31 +17,31 @@ export function Topbar() {
 
   return (
     <header className="flex h-16 shrink-0 items-center gap-2 border-b border-border bg-surface/40 px-3 backdrop-blur-xl sm:gap-3 sm:px-5">
-      {/* Hamburger — mobile only */}
-      <button
-        onClick={() => setMobileNavOpen(true)}
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-muted hover:bg-surface-2 hover:text-fg focus-ring lg:hidden"
-        aria-label="Open menu"
-      >
-        <Menu size={20} />
-      </button>
+      <h1 className="min-w-0 shrink truncate text-base font-semibold tracking-tight sm:shrink-0 sm:text-lg">{title}</h1>
 
-      <h1 className="hidden shrink-0 text-lg font-semibold tracking-tight sm:block">{title}</h1>
-
-      <div className="mx-auto w-full max-w-md sm:px-4">
+      {/* Full search — desktop / tablet */}
+      <div className="mx-auto hidden w-full max-w-md sm:block sm:px-4">
         <button
           onClick={() => setCommandOpen(true)}
           className="group flex w-full items-center gap-2.5 rounded-xl border border-border bg-surface-2 px-3.5 py-2 text-sm text-subtle transition hover:border-border-strong hover:text-muted focus-ring"
         >
           <Search size={16} className="shrink-0" />
-          <span className="flex-1 truncate text-left"><span className="sm:hidden">Search…</span><span className="hidden sm:inline">Search cards, people, payments…</span></span>
-          <kbd className="hidden items-center gap-0.5 rounded-md border border-border bg-surface px-1.5 py-0.5 text-[10px] font-medium text-subtle sm:flex">
+          <span className="flex-1 truncate text-left">Search cards, people, payments…</span>
+          <kbd className="flex items-center gap-0.5 rounded-md border border-border bg-surface px-1.5 py-0.5 text-[10px] font-medium text-subtle">
             <Command size={10} /> K
           </kbd>
         </button>
       </div>
 
-      <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
+      <div className="ml-auto flex shrink-0 items-center gap-1 sm:ml-0 sm:gap-1.5">
+        {/* Compact search — phones */}
+        <button
+          onClick={() => setCommandOpen(true)}
+          className="flex h-9 w-9 items-center justify-center rounded-lg text-muted hover:bg-surface-2 hover:text-fg focus-ring sm:hidden"
+          aria-label="Search"
+        >
+          <Search size={18} />
+        </button>
         <Button variant="secondary" size="sm" onClick={() => openPaymentModal()} className="hidden md:inline-flex">
           <Wallet size={15} /> Record payment
         </Button>
@@ -52,7 +52,7 @@ export function Topbar() {
         >
           <Sparkles size={16} /> <span className="hidden lg:inline">Ask AI</span>
         </button>
-        <div className="relative">
+        <div className="relative hidden sm:block">
           <button className="flex h-9 w-9 items-center justify-center rounded-lg text-muted hover:bg-surface-2 hover:text-fg focus-ring" title="Reminders">
             <Bell size={18} />
           </button>

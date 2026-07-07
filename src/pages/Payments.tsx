@@ -62,22 +62,28 @@ export function PaymentsPage() {
         }
       />
 
-      <div className="mb-5 flex flex-wrap items-center gap-3">
-        <Segmented value={tab} onChange={setTab} options={[
-          { value: 'payments', label: <span className="flex items-center gap-1.5"><ArrowDownCircle size={14} /> Payments</span> },
-          { value: 'spending', label: <span className="flex items-center gap-1.5"><ArrowUpCircle size={14} /> Spending</span> },
-        ]} />
-        <div className="relative min-w-[200px] flex-1">
-          <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-subtle" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search…" className="pl-9" />
+      <div className="mb-4 space-y-2.5 sm:mb-5">
+        <div className="flex items-center justify-between gap-2">
+          <div className="overflow-x-auto no-scrollbar">
+            <Segmented value={tab} onChange={setTab} options={[
+              { value: 'payments', label: <span className="flex items-center gap-1.5"><ArrowDownCircle size={14} /> Payments</span> },
+              { value: 'spending', label: <span className="flex items-center gap-1.5"><ArrowUpCircle size={14} /> Spending</span> },
+            ]} />
+          </div>
+          <div className="shrink-0 rounded-xl border border-border bg-surface-2 px-3 py-2 text-xs sm:text-sm">
+            <span className="hidden text-muted sm:inline">{tab === 'payments' ? 'Total paid' : 'Total spent'}: </span>
+            <span className="font-semibold tabular-nums">{money(tab === 'payments' ? totalPaid : totalSpent)}</span>
+          </div>
         </div>
-        <Select value={cardFilter} onChange={(e) => setCardFilter(e.target.value)} className="w-auto min-w-[140px]">
-          <option value="all">All cards</option>
-          {cards.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-        </Select>
-        <div className="rounded-xl border border-border bg-surface-2 px-3 py-2 text-sm">
-          <span className="text-muted">{tab === 'payments' ? 'Total paid' : 'Total spent'}: </span>
-          <span className="font-semibold tabular-nums">{money(tab === 'payments' ? totalPaid : totalSpent)}</span>
+        <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center">
+          <div className="relative w-full sm:flex-1">
+            <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-subtle" />
+            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search…" className="pl-9" />
+          </div>
+          <Select value={cardFilter} onChange={(e) => setCardFilter(e.target.value)} className="w-full sm:w-auto sm:min-w-[140px]">
+            <option value="all">All cards</option>
+            {cards.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+          </Select>
         </div>
       </div>
 
@@ -99,7 +105,7 @@ export function PaymentsPage() {
                   <p className="text-sm font-semibold tabular-nums text-success">−{money(p.amount)}</p>
                   <button
                     onClick={async () => { await deletePayment(p.id); toast.withUndo('Payment deleted', () => undoDeletePayment(p)); }}
-                    className="flex h-8 w-8 items-center justify-center rounded-lg text-subtle opacity-0 transition hover:bg-danger/10 hover:text-danger group-hover:opacity-100"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg text-subtle opacity-100 transition hover:bg-danger/10 hover:text-danger sm:opacity-0 sm:group-hover:opacity-100"
                   ><Trash2 size={15} /></button>
                 </div>
               );

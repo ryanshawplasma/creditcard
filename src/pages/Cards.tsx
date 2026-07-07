@@ -67,26 +67,28 @@ export function CardsPage() {
       />
 
       {/* Filters */}
-      <div className="mb-5 flex flex-wrap items-center gap-2.5">
-        <div className="relative min-w-[220px] flex-1">
+      <div className="mb-4 flex flex-col gap-2.5 sm:mb-5 sm:flex-row sm:flex-wrap sm:items-center">
+        <div className="relative w-full sm:min-w-[220px] sm:flex-1">
           <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-subtle" />
           <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search cards, people, banks, last 4…" className="pl-9" />
         </div>
-        <Select value={ownerFilter} onChange={(e) => setOwnerFilter(e.target.value)} className="w-auto min-w-[130px]">
-          <option value="all">All people</option>
-          {owners.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
-        </Select>
-        <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="w-auto min-w-[110px]">
-          <option value="all">All status</option>
-          <option>Active</option><option>Blocked</option><option>Closed</option>
-        </Select>
-        <Select value={sort} onChange={(e) => setSort(e.target.value as any)} className="w-auto min-w-[130px]">
-          <option value="balance">Sort: Balance</option>
-          <option value="utilization">Sort: Utilization</option>
-          <option value="due">Sort: Due date</option>
-          <option value="name">Sort: Name</option>
-        </Select>
-        <Segmented value={view} onChange={setView} options={[{ value: 'grid', label: <Grid3x3 size={14} /> }, { value: 'list', label: <List size={14} /> }]} />
+        <div className="-mx-1 flex gap-2 overflow-x-auto px-1 no-scrollbar sm:mx-0 sm:contents sm:overflow-visible sm:px-0">
+          <Select value={ownerFilter} onChange={(e) => setOwnerFilter(e.target.value)} className="w-auto min-w-[130px] shrink-0">
+            <option value="all">All people</option>
+            {owners.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
+          </Select>
+          <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="w-auto min-w-[110px] shrink-0">
+            <option value="all">All status</option>
+            <option>Active</option><option>Blocked</option><option>Closed</option>
+          </Select>
+          <Select value={sort} onChange={(e) => setSort(e.target.value as any)} className="w-auto min-w-[130px] shrink-0">
+            <option value="balance">Sort: Balance</option>
+            <option value="utilization">Sort: Utilization</option>
+            <option value="due">Sort: Due date</option>
+            <option value="name">Sort: Name</option>
+          </Select>
+          <div className="shrink-0"><Segmented value={view} onChange={setView} options={[{ value: 'grid', label: <Grid3x3 size={14} /> }, { value: 'list', label: <List size={14} /> }]} /></div>
+        </div>
       </div>
 
       {filtered.length === 0 ? (

@@ -251,7 +251,7 @@ function DueRow({ item, onPay, ownerName }: { item: DueItem; onPay: () => void; 
         <p className="text-sm font-semibold tabular-nums">{money(item.amount)}</p>
         <p className={cn('text-xs', toneColor)}>{item.status === 'overdue' ? `${Math.abs(item.daysUntil)}d late` : relativeDays(item.dueDate)}</p>
       </div>
-      <button onClick={onPay} className="ml-1 rounded-lg bg-accent/12 px-2.5 py-1.5 text-xs font-medium text-accent opacity-0 transition group-hover:opacity-100">Pay</button>
+      <button onClick={onPay} className="ml-1 rounded-lg bg-accent/12 px-2.5 py-1.5 text-xs font-medium text-accent opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100">Pay</button>
     </div>
   );
 }
